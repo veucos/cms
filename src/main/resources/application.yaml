@@ -1,0 +1,46 @@
+spring:
+  profiles:
+    active: h2
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/jsp/
+#      suffix: .jsp
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: RandomSecretKey1234567890!RandomSecretKey1234567890!RandomSecretKey1234567890!RandomSecretKey1234567890!
+    expiration-in-ms: 86400000
+
+logging:
+  level:
+    #    org.springframework: TRACE
+    root:
+  #    ru.edu.module12: debug
+  path: userService.log
+
+service:
+  description: User service
+  version: 1.0 BETA
+  security:
+    secure-key-username: test
+    secure-key-password: 123456
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationSorter: method
+    tagsSorter: alpha
