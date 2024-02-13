@@ -4,7 +4,6 @@ package ru.veucos.cms.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.Customizer;
@@ -20,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import ru.veucos.cms.security.Role;
 import ru.veucos.cms.security.jwt.JwtAuthorizationFilter;
 import ru.veucos.cms.security.jwt.JwtProviderImpl;
 
@@ -45,7 +43,9 @@ public class SecurityConfig {
                         .antMatchers("/api-docs/**", "/swagger*/**", "/webjars/**").permitAll()
                         .antMatchers("/api/auth/**").permitAll()
                         .antMatchers("/h2-console/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        .antMatchers("/api/banks/**").permitAll()
+                        .antMatchers("/api/users/**").permitAll()
+                        //.antMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
 //                        .antMatchers("/gateway/book/**").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

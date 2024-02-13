@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class JwtProviderImpl implements JwtProvider {
             return null;
         }
 
-        String username = claims.getSubject();
+        String email = claims.getSubject();
         Long userId = claims.get("userId", Long.class);
 
         Set<GrantedAuthority> authorities = Arrays.stream(claims.get("roles").toString().split(","))
@@ -80,13 +81,13 @@ public class JwtProviderImpl implements JwtProvider {
                 .collect(Collectors.toSet());
 
         UserDetails userDetails = CustomUserPrincipal.builder()
-                .username(username)
+                .email(email)
                 .authorities(authorities)
                 .id(userId)
                 .build();
 
 
-        if (username == null) {
+        if (email == null) {
             return null;
         }
 

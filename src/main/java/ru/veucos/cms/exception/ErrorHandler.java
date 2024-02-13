@@ -6,19 +6,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 
 @ControllerAdvice
 public class ErrorHandler {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ServiceError> handleError(EntityNotFoundException ex) {
+        return generateError(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
-    @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<ServiceError> handleError(ItemNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ServiceError> handleError(NotFoundException ex) {
+        return generateError(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<ServiceError> generateError(String message, HttpStatus httpStatus) {
         ServiceError serviceError = new ServiceError();
-        serviceError.setStatus(HttpStatus.NOT_FOUND.value());
+        serviceError.setStatus(httpStatus.value());
         serviceError.setTimeStamp(new Date().getTime());
-        serviceError.setDetails(ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        serviceError.setDetails(message);
+        return ResponseEntity.status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(serviceError);
     }

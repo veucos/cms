@@ -12,11 +12,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.veucos.cms.controller.impl.UserControllerImpl;
 import ru.veucos.cms.entity.User;
-import ru.veucos.cms.service.UserService;
+import ru.veucos.cms.service.impl.UserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({UserController.class})
+@WebMvcTest({UserControllerImpl.class})
 class UserControllerTest {
     List<User> users;
     @InjectMocks
@@ -35,14 +34,14 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private UserService service;
+    private UserServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        users = new ArrayList<>(Arrays.asList(
-                new User(1L, "User1", 11, "123456"),
-                new User(2L, "User2", 22, "123456")
-        ));
+//        users = new ArrayList<>(Arrays.asList(
+//                new User(1L, "User1", 11, "123456"),
+//                new User(2L, "User2", 22, "123456")
+//        ));
     }
 
     @AfterEach

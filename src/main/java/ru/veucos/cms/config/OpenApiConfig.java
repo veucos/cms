@@ -17,7 +17,7 @@ public class OpenApiConfig {
                                  @Value("${service.version}") String appVersion) {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Users service API")
+                        .title("Система учета и расчета кредита")
                         .version(appVersion)
                         .description(appDescription)
                         .termsOfService("http://swagger.io/terms/")

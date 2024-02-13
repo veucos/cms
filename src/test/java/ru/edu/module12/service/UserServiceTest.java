@@ -8,11 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.veucos.cms.entity.User;
-import ru.veucos.cms.exception.ItemNotFoundException;
+import ru.veucos.cms.exception.NotFoundException;
 import ru.veucos.cms.repository.UserRepository;
+import ru.veucos.cms.service.impl.UserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,15 +26,15 @@ class UserServiceTest {
     List<User> users;
     @Mock
     private UserRepository repository;
-    private UserService service;
+    private UserServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new UserService(repository);
-        users = new ArrayList<>(Arrays.asList(
-                new User(1L, "User1", 11, "123456"),
-                new User(2L, "User2", 22, "123456")
-        ));
+//        service = new UserService(repository);
+//        users = new ArrayList<>(Arrays.asList(
+//                new User(1L, "User1", 11, "123456"),
+//                new User(2L, "User2", 22, "123456")
+//        ));
     }
 
     @AfterEach
@@ -93,7 +92,7 @@ class UserServiceTest {
     @Test
     @DisplayName("check NotFoundException")
     void notFoundException() {
-        ItemNotFoundException exception = assertThrows(ItemNotFoundException.class, () -> service.deleteById(5L));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.deleteById(5L));
         assertEquals("User not found, id = 5", exception.getMessage());
     }
 }

@@ -9,30 +9,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.veucos.cms.dto.AuthUserDto;
-import ru.veucos.cms.entity.User;
-import ru.veucos.cms.service.AuthenticationService;
-import ru.veucos.cms.service.UserService;
+import ru.veucos.cms.dto.UserDto;
+import ru.veucos.cms.service.authentication.AuthenticationService;
+import ru.veucos.cms.service.impl.UserServiceImpl;
 
 
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
-@Tag(name = "Authentication", description = "Authentication API")
+@Tag(name = "Authentication", description = "Авторизация")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PostMapping("signup")
-    public ResponseEntity<?> signUp(@RequestBody User user) {
+    public ResponseEntity<UserDto> signUp(@RequestBody UserDto user) {
         if (userService.isUserExist(user.getEmail())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);
     }
 
     @PostMapping("signin")
-    public ResponseEntity<?> signIn(@RequestBody AuthUserDto user) {
+    public ResponseEntity<UserDto> signIn(@RequestBody AuthUserDto user) {
         return new ResponseEntity<>(authenticationService.signInAndReturnJwt(user), HttpStatus.OK);
     }
 }

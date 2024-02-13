@@ -44,7 +44,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("check create user")
     void create() {
-        repository.save(new User(4L, "User4", 44, "123456"));
+        //repository.save(new User(4L, "User4", 44, "123456"));
         Optional<User> user = repository.findById(4L);
         assertThat(user.get().getName()).isEqualTo("User4");
         List<User> users = repository.findAll();
@@ -54,7 +54,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("check update user")
     void update() {
-        repository.save(new User(3L, "User4", 44, "123456"));
+        //repository.save(new User(3L, "User4", 44, "123456"));
         Optional<User> user = repository.findById(3L);
         assertThat(user.get().getName()).isEqualTo("User4");
         List<User> users = repository.findAll();

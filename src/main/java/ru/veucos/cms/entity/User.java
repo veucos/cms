@@ -1,6 +1,5 @@
 package ru.veucos.cms.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class User {
     @Id
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GenericGenerator(name = "kaugen", strategy = "increment")
     @GeneratedValue(generator = "kaugen")
     private Long id;
