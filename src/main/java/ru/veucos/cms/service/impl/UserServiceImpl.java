@@ -19,6 +19,9 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDto, Long> {
     public User getModelByEmail(String email) {
         return userRepository.findByEmail(email).get();
     }
+    public UserDto getByEmail(String email) {
+        return mapper.toDto(userRepository.findByEmail(email).get());
+    }
 
     public boolean isUserExist(String email) {
         return userRepository.findByEmail(email).isPresent();
