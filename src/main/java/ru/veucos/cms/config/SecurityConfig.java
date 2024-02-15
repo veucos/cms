@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/api/banks/**").permitAll()
                         .antMatchers("/api/users/**").permitAll()
+                        .antMatchers("/api/offers/**").permitAll()
                         //.antMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
 //                        .antMatchers("/gateway/book/**").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())

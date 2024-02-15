@@ -10,7 +10,7 @@ public class OfferDto {
     private String name;
     private Long bankId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long bankName;
+    private String bankName;
     private Long lim;
     private Integer term;
     private Integer rate;

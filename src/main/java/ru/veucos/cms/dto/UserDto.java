@@ -12,5 +12,10 @@ public class UserDto {
     private String name;
     private String phone;
     private String passport;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Role role;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String token;
 }

@@ -29,7 +29,6 @@ public class AuthenticationService {
 
         User signInUser = customUserPrincipal.getUser();
         signInUser.setToken(jwt);
-
         return mapper.toDto(signInUser);
     }
 }

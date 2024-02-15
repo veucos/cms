@@ -1,5 +1,6 @@
 package ru.veucos.cms.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class AuthenticationController {
     private final UserServiceImpl userService;
 
     @PostMapping("signup")
+    @Operation(summary = "Регистрация")
     public ResponseEntity<UserDto> signUp(@RequestBody UserDto user) {
         if (userService.isUserExist(user.getEmail())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -32,6 +34,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("signin")
+    @Operation(summary = "Авторизация")
     public ResponseEntity<UserDto> signIn(@RequestBody AuthUserDto user) {
         return new ResponseEntity<>(authenticationService.signInAndReturnJwt(user), HttpStatus.OK);
     }

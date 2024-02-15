@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public abstract class BaseServiceImpl<O, T, K> implements BaseService<O, T, K> {
     protected JpaRepository<O, K> repository;
-    private BaseMapper<O, T> mapper;
+    protected BaseMapper<O, T> mapper;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
