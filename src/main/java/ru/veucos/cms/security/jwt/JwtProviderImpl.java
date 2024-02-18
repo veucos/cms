@@ -3,7 +3,7 @@ package ru.veucos.cms.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,50 +13,51 @@ import org.springframework.stereotype.Component;
 import ru.veucos.cms.security.CustomUserPrincipal;
 import ru.veucos.cms.security.SecurityUtil;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Провайдер JWT
+ */
 @Component
-@Log
+@Log4j2
 public class JwtProviderImpl implements JwtProvider {
 
-    //@Value("${app.jwt.secret}")
     private final String JWT_SECRET;
-
-    //@Value("${app.jwt.expiration-in-ms}")
     private final Long JWT_EXPIRATION_IN_MS;
 
+    /**
+     * Конструктор
+     *
+     * @param JWT_SECRET
+     * @param JWT_EXPIRATION_IN_MS
+     */
     public JwtProviderImpl(@Value("${app.jwt.secret}") String JWT_SECRET, @Value("${app.jwt.expiration-in-ms}") Long JWT_EXPIRATION_IN_MS) {
         this.JWT_SECRET = JWT_SECRET;
         this.JWT_EXPIRATION_IN_MS = JWT_EXPIRATION_IN_MS;
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("init JWT: " + JWT_SECRET);
-        log.info("init JWT_EXPIRATION_IN_MS: " + JWT_EXPIRATION_IN_MS);
-    }
-
+    /**
+     * Генерация токена JWT
+     *
+     * @param auth авторизационные данные
+     * @return
+     */
     @Override
     public String generateToken(CustomUserPrincipal auth) {
+        log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         log.info("generateToken JWT: " + JWT_SECRET);
         log.info("generateToken JWT_EXPIRATION_IN_MS: " + JWT_EXPIRATION_IN_MS);
-
-
         String authorities = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        //need a key to encryption
         Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-
         return Jwts.builder().subject(auth.getUsername())
                 .claim("roles", authorities)
                 .claim("userId", auth.getId())
@@ -65,10 +66,16 @@ public class JwtProviderImpl implements JwtProvider {
                 .compact();
     }
 
+    /**
+     * Получение объекта аутентификации
+     *
+     * @param request запрос
+     * @return
+     */
     @Override
     public Authentication getAuthentication(HttpServletRequest request) {
+        log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         Claims claims = extractClaims(request);
-        log.warning("getAuthentication claims: " + claims);
         if (claims == null) {
             return null;
         }
@@ -94,28 +101,28 @@ public class JwtProviderImpl implements JwtProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     }
 
-
+    /**
+     * Проверка токена JWT
+     *
+     * @param request
+     * @return
+     */
     @Override
     public boolean isTokenValid(HttpServletRequest request) {
+        log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         Claims claims = extractClaims(request);
-
         if (claims == null) {
             return false;
         }
-
-        //return !claims.getExpiration().before(new Date())
         return !claims.getExpiration().before(new Date());
     }
 
-    public Claims extractClaims(HttpServletRequest request) {
-        log.info("extractClaims JWT: " + JWT_SECRET);
-        log.info("extractClaims JWT_EXPIRATION_IN_MS: " + JWT_EXPIRATION_IN_MS);
-
+    private Claims extractClaims(HttpServletRequest request) {
+        log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         String token = SecurityUtil.extractAuthTokenFromRequest(request);
         if (token == null) {
             return null;
         }
-
         SecretKey key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
         return Jwts.parser()
                 .verifyWith(key)

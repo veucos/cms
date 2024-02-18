@@ -1,13 +1,19 @@
 package ru.veucos.cms.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
+/**
+ * Данные графика платежей
+ */
 @Data
+@AllArgsConstructor
 public class ScheduleDto {
-    private Date date;
+    private LocalDate date;
     private Double total;
     private Double body;
     private Double percent;
+    private Double remainBody;
 }

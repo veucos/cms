@@ -8,14 +8,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.veucos.cms.controller.impl.UserControllerImpl;
-import ru.veucos.cms.entity.User;
-import ru.veucos.cms.service.impl.UserServiceImpl;
+import ru.veucos.cms.dto.UserDto;
+import ru.veucos.cms.security.Role;
+import ru.veucos.cms.security.WithMockAdminUser;
+import ru.veucos.cms.service.BaseService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,21 +32,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest({UserControllerImpl.class})
+@WithMockAdminUser
 class UserControllerTest {
-    List<User> users;
+    List<UserDto> usersDto;
     @InjectMocks
     ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private UserServiceImpl service;
+    @Qualifier("userService")
+    private BaseService service;
 
     @BeforeEach
     void setUp() {
-//        users = new ArrayList<>(Arrays.asList(
-//                new User(1L, "User1", 11, "123456"),
-//                new User(2L, "User2", 22, "123456")
-//        ));
+        usersDto = new ArrayList<>(Arrays.asList(
+                new UserDto(1L, "User1@test.ru", "User1", "+7(123)4567890", "9999 123456", "", Role.USER, ""),
+                new UserDto(2L, "User2@test.ru", "User2", "+7(123)4567890", "9999 123456", "", Role.USER, "")
+        ));
     }
 
     @AfterEach
@@ -51,10 +58,9 @@ class UserControllerTest {
     @Test
     @DisplayName("check receiving all users")
     void getAllUsers() throws Exception {
+        when(service.getAll()).thenReturn(usersDto);
 
-        when(service.findAll()).thenReturn(users);
-
-        mockMvc.perform(get("api/v1/users"))
+        mockMvc.perform(get("/api/users/all"))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -65,39 +71,24 @@ class UserControllerTest {
     @Test
     @DisplayName("check receiving single user details")
     void getUserById() throws Exception {
-        when(service.findById(anyLong())).thenReturn(users.get(0));
+        when(service.getById(anyLong())).thenReturn(usersDto.get(0));
 
-        mockMvc.perform(get("/api/v1/users/1"))
+        mockMvc.perform(get("/api/users?key=1"))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.*", Matchers.hasSize(3)))
+                .andExpect(jsonPath("$.*", Matchers.hasSize(7)))
                 .andExpect(jsonPath("$.name").value("User1"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("check adding a new user")
-    void createUser() throws Exception {
-        when(service.save(any(User.class))).thenReturn(users.get(1));
-
-        mockMvc.perform(post("/api/v1/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(users.get(1)))
-                )
-                .andDo(print())
-                .andExpect(header().string("Location", "/api/v1/users/" + users.get(1).getId()))
-                .andExpect(jsonPath("$").doesNotExist())
-                .andExpect(status().isCreated());
-    }
-
-    @Test
     @DisplayName("check updating a user")
     void updateUser() throws Exception {
-        when(service.update(any(User.class))).thenReturn(users.get(0));
+        when(service.update(anyLong(), any(UserDto.class))).thenReturn(usersDto.get(0));
 
-        mockMvc.perform(put("/api/v1/users")
+        mockMvc.perform(put("/api/users?key=1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(users.get(0)))
+                        .content(mapper.writeValueAsString(usersDto.get(0)))
                 )
                 .andDo(print())
                 .andExpect(jsonPath("$").doesNotExist())
@@ -107,9 +98,9 @@ class UserControllerTest {
     @Test
     @DisplayName("check deleting a user by id")
     void deleteUserById() throws Exception {
-        doNothing().when(service).deleteById(anyLong());
+        doNothing().when(service).delete(anyLong());
 
-        mockMvc.perform(delete("/api/v1/users/1"))
+        mockMvc.perform(delete("/api/users/1"))
                 .andDo(print())
                 .andExpect(jsonPath("$").doesNotExist())
                 .andExpect(status().isOk());

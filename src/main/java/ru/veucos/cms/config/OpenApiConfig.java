@@ -11,7 +11,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SecurityScheme(name = "authorization", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
+/**
+ * Конфигурация Open API Swagger
+ */
 public class OpenApiConfig {
+    /**
+     * @param appDescription Описание приложения
+     * @param appVersion     Версия приложения
+     * @return
+     */
     @Bean
     public OpenAPI customOpenAPI(@Value("${service.description}") String appDescription,
                                  @Value("${service.version}") String appVersion) {

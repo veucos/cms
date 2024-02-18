@@ -1,5 +1,8 @@
 package ru.veucos.cms.exception;
 
+/**
+ * Особая ситуация - Данные не найдены
+ */
 public class NotFoundException extends RuntimeException {
 
     public NotFoundException() {

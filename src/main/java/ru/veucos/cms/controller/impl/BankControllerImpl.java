@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.veucos.cms.dto.BankDto;
 import ru.veucos.cms.entity.Bank;
 
+/**
+ * Контроллер справочника Банков
+ * Основан на общем контроллере BaseController
+ */
 @RestController
 @RequestMapping(value = "api/banks", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Banks", description = "Банки")

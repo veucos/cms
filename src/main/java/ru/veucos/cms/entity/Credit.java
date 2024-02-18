@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
+/**
+ * Кредит
+ */
 @Entity
 @Table(name = "credits")
 @Data
@@ -25,5 +28,5 @@ public class Credit {
     @ManyToOne(fetch = FetchType.LAZY)
     private Offer offer;
     private Long amount;
-    private Date date;
+    private LocalDate date;
 }

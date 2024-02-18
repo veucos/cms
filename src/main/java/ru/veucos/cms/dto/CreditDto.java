@@ -3,9 +3,12 @@ package ru.veucos.cms.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 
+/**
+ * Данные кредита клиента
+ */
 @Data
 public class CreditDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -15,6 +18,7 @@ public class CreditDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String userName;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotBlank(message = "Id предложения обязательно")
     private Long offerId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String offerName;
@@ -28,9 +32,8 @@ public class CreditDto {
     private Integer term;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer rate;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @NotBlank(message = "Сумма кредита обязательна")
     private Long amount;
-    private Date date;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private ArrayList<ScheduleDto> schedule;
+    private LocalDate date;
 }

@@ -8,6 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+/**
+ * Кредитное предложение
+ */
 @Entity
 @Table(name = "offers")
 @Data

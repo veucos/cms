@@ -8,6 +8,9 @@ import ru.veucos.cms.security.Role;
 
 import javax.persistence.*;
 
+/**
+ * Пользователи (клиенты)
+ */
 @Entity
 @Table(name = "users")
 @Data

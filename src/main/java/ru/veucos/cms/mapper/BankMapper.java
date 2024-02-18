@@ -8,6 +8,9 @@ import ru.veucos.cms.entity.Bank;
 import ru.veucos.cms.mapper.base.BaseMapper;
 import ru.veucos.cms.mapper.base.JsonNullableMapper;
 
+/**
+ * Мэппер Банка
+ */
 @Mapper(uses = JsonNullableMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = "spring")

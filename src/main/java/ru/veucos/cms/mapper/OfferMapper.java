@@ -3,13 +3,15 @@ package ru.veucos.cms.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.veucos.cms.dto.OfferDto;
 import ru.veucos.cms.entity.Offer;
 import ru.veucos.cms.mapper.base.BaseMapper;
 import ru.veucos.cms.mapper.base.JsonNullableMapper;
 
+/**
+ * Мэпппер кредитного предложения
+ */
 @Mapper(uses = JsonNullableMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = "spring")

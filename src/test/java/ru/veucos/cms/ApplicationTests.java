@@ -1,10 +1,10 @@
-package ru.edu.module12;
+package ru.veucos.cms;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Module12ApplicationTests {
+class ApplicationTests {
 
     @Test
     void contextLoads() {

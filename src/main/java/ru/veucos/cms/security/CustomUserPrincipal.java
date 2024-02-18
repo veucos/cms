@@ -11,6 +11,9 @@ import ru.veucos.cms.entity.User;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Принципал авторизации
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

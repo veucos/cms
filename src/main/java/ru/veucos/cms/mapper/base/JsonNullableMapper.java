@@ -3,6 +3,10 @@ package ru.veucos.cms.mapper.base;
 import org.mapstruct.Mapper;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+/**
+ * Nullable мэппер
+ * для реализации частичного обновления
+ */
 @Mapper(componentModel = "spring")
 public interface JsonNullableMapper {
 
