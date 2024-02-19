@@ -24,41 +24,41 @@ class UserRepositoryTest {
     @DisplayName("check finding all users")
     void findAll() {
         List<User> users = repository.findAll();
-        assertThat(users.size()).isEqualTo(5);
+        assertThat(users).hasSize(5);
     }
 
     @Test
     @DisplayName("check finding user by Id")
     void findById() {
-        Optional<User> user = repository.findById(100001L);
+        Optional<User> user = repository.findById(1001L);
         assertThat(user.get().getName()).isEqualTo("User1");
     }
 
     @Test
     @DisplayName("check delete user by Id")
     void deleteById() {
-        repository.deleteById(100001L);
+        repository.deleteById(1003L);
         List<User> users = repository.findAll();
-        assertThat(users.size()).isEqualTo(4);
+        assertThat(users).hasSize(4);
     }
 
     @Test
     @DisplayName("check create user")
     void create() {
-        repository.save(new User(100004L, "user4@test.ru", "User4", "+7(123)456-7890", "9988 123456", "$2a$10$c6vaCuFKArxAHhlpCknkvOwqvVpI5LFrxvr34z3YmGi7Ups0b6VsS", "", Role.USER));
-        Optional<User> user = repository.findById(100004L);
+        repository.save(new User(1004L, "user4@test.ru", "User4", "+7(123)456-7890", "9988 123456", "$2a$10$c6vaCuFKArxAHhlpCknkvOwqvVpI5LFrxvr34z3YmGi7Ups0b6VsS", "", Role.USER));
+        Optional<User> user = repository.findById(1004L);
         assertThat(user.get().getName()).isEqualTo("User4");
         List<User> users = repository.findAll();
-        assertThat(users.size()).isEqualTo(6);
+        assertThat(users).hasSize(6);
     }
 
     @Test
     @DisplayName("check update user")
     void update() {
-        repository.save(new User(100003L, "user4@test.ru", "User4", "+7(123)456-7890", "9988 123456", "$2a$10$c6vaCuFKArxAHhlpCknkvOwqvVpI5LFrxvr34z3YmGi7Ups0b6VsS", "", Role.USER));
-        Optional<User> user = repository.findById(100003L);
+        repository.save(new User(1003L, "user4@test.ru", "User4", "+7(123)456-7890", "9988 123456", "$2a$10$c6vaCuFKArxAHhlpCknkvOwqvVpI5LFrxvr34z3YmGi7Ups0b6VsS", "", Role.USER));
+        Optional<User> user = repository.findById(1003L);
         assertThat(user.get().getName()).isEqualTo("User4");
         List<User> users = repository.findAll();
-        assertThat(users.size()).isEqualTo(5);
+        assertThat(users).hasSize(5);
     }
 }

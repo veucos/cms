@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.veucos.cms.dto.CreditDto;
-import ru.veucos.cms.dto.ScheduleDto;
+import ru.veucos.cms.dto.CreditInfoDto;
 import ru.veucos.cms.entity.Credit;
 import ru.veucos.cms.service.CreditService;
-
-import java.util.List;
 
 /**
  * Контроллер кредитов
@@ -34,7 +32,7 @@ public class CreditControllerImpl extends BaseControllerImpl<Credit, CreditDto, 
 
     @Operation(summary = "График платежей")
     @GetMapping("/schedule")
-    public ResponseEntity<List<ScheduleDto>> getSchedule(Long creditId) {
+    public ResponseEntity<CreditInfoDto> getSchedule(Long creditId) {
         log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         return new ResponseEntity<>(creditService.getSchedule(creditId), HttpStatus.OK);
     }

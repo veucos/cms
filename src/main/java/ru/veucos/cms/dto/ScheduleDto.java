@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ScheduleDto {
     private LocalDate date;
-    private Double total;
+    private Double monthly;
     private Double body;
     private Double percent;
     private Double remainBody;

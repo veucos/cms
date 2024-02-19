@@ -25,7 +25,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest({UserControllerImpl.class})
 @WithMockAdminUser
-class UserControllerTest {
+class UserControllerAdminUserTest {
     List<UserDto> usersDto;
     @InjectMocks
     ObjectMapper mapper;
@@ -92,17 +91,17 @@ class UserControllerTest {
                 )
                 .andDo(print())
                 .andExpect(jsonPath("$").doesNotExist())
-                .andExpect(status().isOk());
+                .andExpect(status().is(403));
     }
 
     @Test
     @DisplayName("check deleting a user by id")
     void deleteUserById() throws Exception {
-        doNothing().when(service).delete(anyLong());
+        when(service.delete(anyLong())).thenReturn(usersDto.get(0));
 
         mockMvc.perform(delete("/api/users/1"))
                 .andDo(print())
                 .andExpect(jsonPath("$").doesNotExist())
-                .andExpect(status().isOk());
+                .andExpect(status().is(403));
     }
 }

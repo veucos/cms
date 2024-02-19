@@ -22,7 +22,7 @@ public interface AuthenticationController {
      */
     @PostMapping("signup")
     @Operation(summary = "Регистрация")
-    public ResponseEntity<UserDto> signUp(@RequestBody @Valid UserDto user);
+    ResponseEntity<UserDto> signUp(@RequestBody @Valid UserDto user);
 
     /**
      * Запрос авторизации
@@ -32,7 +32,7 @@ public interface AuthenticationController {
      */
     @PostMapping("signin")
     @Operation(summary = "Авторизация")
-    public ResponseEntity<UserDto> signIn(@RequestBody @Valid AuthUserDto user);
+    ResponseEntity<UserDto> signIn(@RequestBody @Valid AuthUserDto user);
 
     /**
      * Запрос получения текущего(авторизованного) пользователя
@@ -41,5 +41,5 @@ public interface AuthenticationController {
      */
     @GetMapping("user")
     @Operation(summary = "Текущий (авторизованный) пользователь")
-    public ResponseEntity<UserDto> getUser();
+    ResponseEntity<UserDto> getUser();
 }

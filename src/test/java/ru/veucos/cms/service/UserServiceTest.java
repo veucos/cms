@@ -15,13 +15,12 @@ import ru.veucos.cms.entity.User;
 import ru.veucos.cms.mapper.UserMapper;
 import ru.veucos.cms.mapper.UserMapperImpl;
 import ru.veucos.cms.repository.UserRepository;
-import ru.veucos.cms.security.Role;
 import ru.veucos.cms.service.impl.UserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -29,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
+    private final UserMapper userMapper = new UserMapperImpl();
     List<User> users;
     @Mock
     PasswordEncoder passwordEncoder;
@@ -38,15 +38,11 @@ class UserServiceTest {
     private UserMapper mapper;
     @Mock
     private UserRepository repository;
-    private UserMapper userMapper = new UserMapperImpl();
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        users = new ArrayList<>(Arrays.asList(
-                new User(1L, "User1@test.ru", "User1", "+7(123)4567890", "9999 123456", "", "", Role.USER),
-                new User(2L, "User2@test.ru", "User2", "+7(123)4567890", "9999 123456", "", "", Role.USER)
-        ));
+        users = Stream.of(mock(User.class), mock(User.class)).collect(Collectors.toList());
     }
 
     @AfterEach
@@ -58,7 +54,7 @@ class UserServiceTest {
     void findAll() {
         when(repository.findAll()).thenReturn(users);
         List<UserDto> userList = service.getAll();
-        assertThat(userList.size()).isEqualTo(2);
+        assertThat(userList).hasSize(2);
     }
 
     @Test

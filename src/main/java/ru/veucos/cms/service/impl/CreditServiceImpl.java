@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.veucos.cms.dto.CreditDto;
+import ru.veucos.cms.dto.CreditInfoDto;
 import ru.veucos.cms.dto.ScheduleDto;
 import ru.veucos.cms.dto.UserDto;
 import ru.veucos.cms.entity.Credit;
@@ -13,6 +14,7 @@ import ru.veucos.cms.entity.User;
 import ru.veucos.cms.exception.AppErrorException;
 import ru.veucos.cms.exception.NoAuthenticatedException;
 import ru.veucos.cms.exception.NotFoundException;
+import ru.veucos.cms.mapper.CreditMapper;
 import ru.veucos.cms.repository.CreditRepository;
 import ru.veucos.cms.repository.OfferRepository;
 import ru.veucos.cms.security.Role;
@@ -35,6 +37,7 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, CreditDto, Long> 
     private final UserService userService;
     private final OfferRepository offerRepository;
     private final CreditRepository creditRepository;
+    private final CreditMapper creditMapper;
 
     /**
      * Проверка что идет обработка данных текущего пользователя
@@ -70,36 +73,49 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, CreditDto, Long> 
      * @return
      */
     @Override
-    public List<ScheduleDto> getSchedule(Long creditId) {
+    public CreditInfoDto getSchedule(Long creditId) {
         Double body, percent, remainBody;
         log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
+        CreditInfoDto result = new CreditInfoDto();
         checkCurrentUser(creditId);
         Credit credit = getModelById(creditId);
         Double monthRate = credit.getOffer().getRate() / 12.0 / 100;
-        Double monthPayment = Math.round(100 * credit.getAmount() * (monthRate / (1 - Math.pow(1 + monthRate, -credit.getOffer().getTerm())))) / 100.0;
-        Double sum = 0.0;
+        Double monthPayment = roundTwoSigns(credit.getAmount() * (monthRate / (1 - Math.pow(1 + monthRate, -credit.getOffer().getTerm()))));
+        Double bodyTotal = 0.0;
+        Double fullAmount = 0.0;
+        Double percentAmount = 0.0;
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
         for (int i = 1; i < credit.getOffer().getTerm(); i++) {
-            body = Math.round(100 * monthPayment / Math.pow(1 + monthRate, credit.getOffer().getTerm() - i + 1)) / 100.0;
-            percent = Math.round(100 * (monthPayment - body)) / 100.0;
-            sum += body;
-            remainBody = Math.round(100 * credit.getAmount() - sum) / 100.0;
+            body = roundTwoSigns(monthPayment / Math.pow(1 + monthRate, credit.getOffer().getTerm() - i + 1));
+            percent = roundTwoSigns(monthPayment - body);
+            bodyTotal += body;
+            fullAmount += (body + percent);
+            percentAmount += percent;
+            remainBody = roundTwoSigns(credit.getAmount() - bodyTotal);
             scheduleDtos.add(new ScheduleDto(credit.getDate().plusMonths(i - 1),
-                    body + percent,
+                    roundTwoSigns(body + percent),
                     body,
                     percent,
                     remainBody));
 
         }
-        body = Math.round(100 * credit.getAmount() - sum) / 100.0;
-        percent = Math.round(100 * monthPayment - body) / 100.0;
-        remainBody = Math.round(100 * credit.getAmount() - sum - body) / 100.0;
+        body = roundTwoSigns(credit.getAmount() - bodyTotal);
+        percent = roundTwoSigns(monthPayment - body);
+        remainBody = roundTwoSigns(credit.getAmount() - bodyTotal - body);
         scheduleDtos.add(new ScheduleDto(credit.getDate().plusMonths(credit.getOffer().getTerm() - 1),
-                body + percent,
+                roundTwoSigns(body + percent),
                 body,
                 percent,
                 remainBody));
-        return scheduleDtos;
+        bodyTotal += body;
+        fullAmount += body + percent;
+        percentAmount += percent;
+        result.setFullAmount(roundTwoSigns(fullAmount));
+        result.setPercentAmount(roundTwoSigns(percentAmount));
+        result.setRealRate(roundTwoSigns(percentAmount / bodyTotal * 100));
+        result.setSchedule(scheduleDtos);
+        result.setLastDate(credit.getDate().plusMonths(credit.getOffer().getTerm() - 1));
+        return result;
     }
 
     /**
@@ -140,9 +156,8 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, CreditDto, Long> 
         UserDto userDto = userService.getCurrentUser();
         User user = userService.getModelById(userDto.getId());
         return userDto.getRole().equals(Role.ADMIN)
-                ? creditRepository.findAll().stream().map(mapper::toDto).collect(Collectors.toList())
-                : creditRepository.getByUser(user).stream().map(mapper::toDto).collect(Collectors.toList());
-
+                ? creditRepository.findAll().stream().map(creditMapper::toDto).collect(Collectors.toList())
+                : creditRepository.getByUser(user).stream().map(creditMapper::toDto).collect(Collectors.toList());
     }
 
     /**
@@ -173,7 +188,7 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, CreditDto, Long> 
     public Credit getModelById(Long key) {
         log.info(String.format("Start class %s method %s", this.getClass().getSimpleName(), new Throwable().getStackTrace()[0].getMethodName()));
         UserDto userDto = userService.getCurrentUser();
-        Optional<Credit> creditOptional = repository.findById(key);
+        Optional<Credit> creditOptional = creditRepository.findById(key);
         if (!creditOptional.isPresent()) {
             throw new NotFoundException("Данные по ключу " + key + " не найдены");
         }
@@ -183,5 +198,9 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, CreditDto, Long> 
         }
         return creditOptional.orElseThrow(() -> new NotFoundException("Данные по ключу " + key + " не найдены"));
 
+    }
+
+    private Double roundTwoSigns(Double value) {
+        return Math.round(100 * value) / 100.0;
     }
 }
